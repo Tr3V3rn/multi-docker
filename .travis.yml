@@ -1,0 +1,15 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t trestianstewart/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true trestianstewart/react-test npm test -- --coverage --watchAll=false
+
+after_success:
+  - docker build -t trestianstewart/multi-client ./client
+  - docker build -t trestianstewart/multi-nginx ./nginx
+  - docker build -t trestianstewart/multi-server ./server
+  - docker build -t trestianstewart/multi-worker ./worker
